@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'dot-pattern': "radial-gradient(circle at 1px 1px, hsl(var(--border)) 1px, transparent 0)",
+      },
       fontFamily: {
         body: ['Inter', 'sans-serif'],
         headline: ['Inter', 'sans-serif'],
