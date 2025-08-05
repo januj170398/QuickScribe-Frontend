@@ -1,10 +1,9 @@
 
 "use client";
 
-import { useEditor, EditorContent, FloatingMenu } from "@tiptap/react";
+import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "./button";
 
 const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: string) => void }) => {
@@ -28,7 +27,7 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
 
   return (
     <>
-      <FloatingMenu
+      {editor && <BubbleMenu
         editor={editor}
         tippyOptions={{ duration: 100 }}
         className="flex items-center gap-1 bg-card border border-border p-1 rounded-lg shadow-xl"
@@ -82,7 +81,7 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
         >
           <Heading3 className="h-4 w-4" />
         </Button>
-      </FloatingMenu>
+      </BubbleMenu>}
       <EditorContent editor={editor} />
     </>
   );
