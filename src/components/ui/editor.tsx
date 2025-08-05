@@ -11,7 +11,8 @@ import TableRow from "@tiptap/extension-table-row";
 import TextAlign from "@tiptap/extension-text-align";
 import { 
     Bold, Italic, Strikethrough, Underline as UnderlineIcon, Heading1, Heading2, Heading3,
-    AlignLeft, AlignCenter, AlignRight, List, ListOrdered, Quote, Code, Minus, Pilcrow, Table as TableIcon
+    AlignLeft, AlignCenter, AlignRight, List, ListOrdered, Quote, Code, Minus, Pilcrow, Table as TableIcon,
+    ArrowUp, ArrowDown, Trash2, FlipHorizontal, FlipVertical
 } from "lucide-react";
 import { Button } from "./button";
 import { 
@@ -20,6 +21,40 @@ import {
     DropdownMenuItem, 
     DropdownMenuTrigger 
 } from "./dropdown-menu";
+
+const TableToolbar = ({ editor }: { editor: any }) => {
+    if (!editor.isActive("table")) {
+        return null;
+    }
+
+    return (
+        <div className="flex items-center gap-1 bg-card border border-border p-2 rounded-t-lg shadow-sm sticky top-[61px] z-10 flex-wrap">
+            <Button onClick={() => editor.chain().focus().addRowBefore().run()} variant="ghost" size="icon" className="h-8 w-8" title="Add Row Before">
+                <div className="flex items-center"><ArrowUp className="h-4 w-4" /><List className="h-4 w-4" /></div>
+            </Button>
+            <Button onClick={() => editor.chain().focus().addRowAfter().run()} variant="ghost" size="icon" className="h-8 w-8" title="Add Row After">
+                <div className="flex items-center"><ArrowDown className="h-4 w-4" /><List className="h-4 w-4" /></div>
+            </Button>
+            <Button onClick={() => editor.chain().focus().deleteRow().run()} variant="ghost" size="icon" className="h-8 w-8" title="Delete Row">
+                 <div className="flex items-center"><Trash2 className="h-4 w-4 text-destructive" /><List className="h-4 w-4" /></div>
+            </Button>
+            <div className="border-l h-6 mx-1 border-border" />
+            <Button onClick={() => editor.chain().focus().addColumnBefore().run()} variant="ghost" size="icon" className="h-8 w-8" title="Add Column Before">
+                <div className="flex items-center"><FlipVertical className="h-4 w-4 rotate-90" /><List className="h-4 w-4 rotate-90" /></div>
+            </Button>
+            <Button onClick={() => editor.chain().focus().addColumnAfter().run()} variant="ghost" size="icon" className="h-8 w-8" title="Add Column After">
+                <div className="flex items-center"><FlipHorizontal className="h-4 w-4" /><List className="h-4 w-4 rotate-90" /></div>
+            </Button>
+            <Button onClick={() => editor.chain().focus().deleteColumn().run()} variant="ghost" size="icon" className="h-8 w-8" title="Delete Column">
+                <div className="flex items-center"><Trash2 className="h-4 w-4 text-destructive" /><List className="h-4 w-4 rotate-90" /></div>
+            </Button>
+            <div className="border-l h-6 mx-1 border-border" />
+            <Button onClick={() => editor.chain().focus().deleteTable().run()} variant="ghost" size="icon" className="h-8 w-8" title="Delete Table">
+                <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+        </div>
+    )
+}
 
 const EditorToolbar = ({ editor }: { editor: any }) => {
     if (!editor) {
@@ -174,6 +209,7 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
   return (
     <div className="border rounded-b-lg border-t-0">
         <EditorToolbar editor={editor} />
+        <TableToolbar editor={editor} />
         <EditorContent editor={editor} />
     </div>
   );
