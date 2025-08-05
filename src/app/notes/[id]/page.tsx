@@ -24,9 +24,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
 import { Label } from "@/components/ui/label";
+import { useParams } from 'next/navigation';
 
-export default function NoteEditorPage({ params }: { params: { id: string } }) {
-  const isNewNote = params.id === "new";
+export default function NoteEditorPage() {
+  const params = useParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const isNewNote = id === "new";
+
   const [title, setTitle] = React.useState(isNewNote ? "Untitled Note" : "Project Phoenix Kickoff");
   const [content, setContent] = React.useState(isNewNote ? "" : "Meeting notes from the initial planning session for Project Phoenix. Key discussion points included budget allocation, team roles, and project timeline. Next steps are to finalize the project charter and schedule a follow-up meeting with stakeholders.");
   const [tags, setTags] = React.useState<string[]>(isNewNote ? [] : ["project", "work"]);
@@ -48,6 +52,10 @@ export default function NoteEditorPage({ params }: { params: { id: string } }) {
   }
   
   React.useEffect(() => {
+    if (isNewNote) {
+        setSyncStatus("synced");
+        return;
+    };
     setSyncStatus("dirty");
     const handler = setTimeout(() => {
         setSyncStatus("syncing");
@@ -57,7 +65,7 @@ export default function NoteEditorPage({ params }: { params: { id: string } }) {
     return () => {
         clearTimeout(handler);
     };
-  }, [title, content, tags]);
+  }, [title, content, tags, isNewNote]);
 
 
   return (
