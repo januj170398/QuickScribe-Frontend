@@ -10,12 +10,12 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 
-export const SummarizeNoteInputSchema = z.object({
+const SummarizeNoteInputSchema = z.object({
   content: z.string().describe('The content of the note to summarize.'),
 });
 export type SummarizeNoteInput = z.infer<typeof SummarizeNoteInputSchema>;
 
-export const SummarizeNoteOutputSchema = z.object({
+const SummarizeNoteOutputSchema = z.object({
   summary: z.string().describe('A concise summary of the note.'),
 });
 export type SummarizeNoteOutput = z.infer<typeof SummarizeNoteOutputSchema>;
