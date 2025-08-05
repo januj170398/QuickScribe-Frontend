@@ -6,6 +6,7 @@ import {
   MoreHorizontal,
   PlusCircle,
   Search,
+  Tag,
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +38,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import React from "react";
 
 export const mockNotes = [
   {
@@ -77,6 +79,24 @@ export const mockNotes = [
 ];
 
 export default function NotesDashboard() {
+  const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+  const allTags = [...new Set(mockNotes.flatMap(note => note.tags))];
+
+  const handleTagSelect = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
+  
+  const filteredNotes = mockNotes.filter(note => {
+    if (selectedTags.length === 0) return true;
+    return selectedTags.some(tag => note.tags.includes(tag));
+  });
+
+  const activeNotes = filteredNotes.filter(n => n.status === 'active');
+  const archivedNotes = filteredNotes.filter(n => n.status === 'archived');
+
+
   return (
     <div className="flex flex-col gap-4 h-full p-4 md:p-6">
         <div className="flex items-center">
@@ -108,6 +128,32 @@ export default function NotesDashboard() {
                 className="w-full rounded-lg bg-card pl-8 md:w-[200px] lg:w-[320px]"
               />
             </div>
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <Tag className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Filter by Tag {selectedTags.length > 0 && `(${selectedTags.length})`}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Filter by Tag</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                 {allTags.length > 0 ? allTags.map(tag => (
+                  <DropdownMenuCheckboxItem
+                    key={tag}
+                    checked={selectedTags.includes(tag)}
+                    onSelect={(e) => {
+                        e.preventDefault();
+                        handleTagSelect(tag);
+                    }}
+                  >
+                    {tag}
+                  </DropdownMenuCheckboxItem>
+                )) : <DropdownMenuItem disabled>No tags found</DropdownMenuItem>}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 gap-1">
@@ -138,11 +184,11 @@ export default function NotesDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <NotesTable notes={mockNotes} />
+              <NotesTable notes={filteredNotes} />
             </CardContent>
             <CardFooter>
               <div className="text-xs text-muted-foreground">
-                Showing <strong>1-{mockNotes.length}</strong> of <strong>{mockNotes.length}</strong> notes
+                Showing <strong>1-{filteredNotes.length}</strong> of <strong>{mockNotes.length}</strong> notes
               </div>
             </CardFooter>
           </Card>
@@ -156,7 +202,7 @@ export default function NotesDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <NotesTable notes={mockNotes.filter(n => n.status === 'active')} />
+              <NotesTable notes={activeNotes} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -169,7 +215,7 @@ export default function NotesDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <NotesTable notes={mockNotes.filter(n => n.status === 'archived')} />
+              <NotesTable notes={archivedNotes} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -195,7 +241,7 @@ function NotesTable({ notes }: { notes: typeof mockNotes }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {notes.map((note) => (
+        {notes.length > 0 ? notes.map((note) => (
           <TableRow key={note.id}>
             <TableCell className="font-medium">
                 <Link href={`/notes/${note.id}`} className="hover:underline">
@@ -235,7 +281,11 @@ function NotesTable({ notes }: { notes: typeof mockNotes }) {
               </DropdownMenu>
             </TableCell>
           </TableRow>
-        ))}
+        )) : (
+            <TableRow>
+                <TableCell colSpan={5} className="text-center h-24">No notes found.</TableCell>
+            </TableRow>
+        )}
       </TableBody>
     </Table>
   );
