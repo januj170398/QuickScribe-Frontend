@@ -13,14 +13,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Feather } from "lucide-react";
+import React from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { toast } = useToast();
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
   const handleRegister = (event: React.FormEvent) => {
     event.preventDefault();
-    // This is a mock registration. In a real app, you'd handle user creation here.
-    router.push("/notes");
+    if (email === "test@example.com" && password === "password") {
+      router.push("/notes");
+    } else {
+      toast({
+        title: "Invalid Credentials",
+        description: "Please use 'test@example.com' and 'password' to proceed.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -49,11 +61,19 @@ export default function RegisterPage() {
                   type="email"
                   placeholder="m@example.com"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" required />
+                <Input 
+                  id="password" 
+                  type="password" 
+                  required 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
               <Button type="submit" className="w-full">
                 Create an account
