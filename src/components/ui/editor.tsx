@@ -4,7 +4,7 @@
 import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
-import { Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3, Underline as UnderlineIcon } from "lucide-react";
+import { Bold, Italic, Strikethrough, Heading1, Heading2, Heading3, Underline as UnderlineIcon } from "lucide-react";
 import { Button } from "./button";
 
 const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: string) => void }) => {
