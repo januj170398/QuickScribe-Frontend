@@ -36,7 +36,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-2xl text-center">QuickScribe</CardTitle>
           <CardDescription className="text-center">
-            Enter your email below to login to your account
+            Your thoughts are waiting. Let's get them on the page.
           </CardDescription>
         </CardHeader>
         <CardContent>

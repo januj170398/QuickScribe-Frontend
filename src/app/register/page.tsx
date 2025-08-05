@@ -38,7 +38,7 @@ export default function RegisterPage() {
           </div>
           <CardTitle className="text-2xl text-center">Create an Account</CardTitle>
           <CardDescription className="text-center">
-            Enter your information to create an account
+            Let's get you set up to capture some brilliance.
           </CardDescription>
         </CardHeader>
         <CardContent>
