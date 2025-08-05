@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -16,13 +17,15 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import React from "react";
 import { useParams } from 'next/navigation';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { summarizeNote } from "@/ai/flows/summarizeNote";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import Editor from "@/components/ui/editor";
+import { improveWriting } from "@/ai/flows/improveWriting";
+
 
 export default function NoteEditorPage() {
   const params = useParams();
@@ -32,12 +35,13 @@ export default function NoteEditorPage() {
   const { toast } = useToast();
 
   const [title, setTitle] = React.useState(isNewNote ? "Untitled Note" : "Project Phoenix Kickoff");
-  const [content, setContent] = React.useState(isNewNote ? "" : "Meeting notes from the initial planning session for Project Phoenix. Key discussion points included budget allocation, team roles, and project timeline. Next steps are to finalize the project charter and schedule a follow-up meeting with stakeholders.");
+  const [content, setContent] = React.useState(isNewNote ? "" : "<p>Meeting notes from the initial planning session for <strong>Project Phoenix</strong>. Key discussion points included <em>budget allocation</em>, team roles, and project timeline. Next steps are to finalize the project charter and schedule a follow-up meeting with stakeholders.</p>");
   const [tags, setTags] = React.useState<string[]>(isNewNote ? [] : ["project", "work"]);
   const [tagInput, setTagInput] = React.useState("");
   const [syncStatus, setSyncStatus] = React.useState<"synced" | "syncing" | "dirty">("synced");
 
   const [isSummaryLoading, setIsSummaryLoading] = React.useState(false);
+  const [isImprovingWriting, setIsImprovingWriting] = React.useState(false);
   const [summary, setSummary] = React.useState<string | null>(null);
   const [isSummaryDialogOpen, setIsSummaryDialogOpen] = React.useState(false);
 
@@ -98,6 +102,35 @@ export default function NoteEditorPage() {
     }
   }
 
+  const handleImproveWriting = async () => {
+    if (!content) {
+        toast({
+            variant: "destructive",
+            title: "Cannot improve writing",
+            description: "There is no content to improve.",
+        });
+        return;
+    }
+    setIsImprovingWriting(true);
+    try {
+      const result = await improveWriting({ content });
+      setContent(result.improvedContent);
+      toast({
+        title: "Writing Improved",
+        description: "The AI has improved the writing of your note.",
+      })
+    } catch (error) {
+       toast({
+        variant: "destructive",
+        title: "Failed to Improve Writing",
+        description: "We couldn't improve the writing for this note. Please try again.",
+      });
+      console.error("Improve writing error:", error);
+    } finally {
+      setIsImprovingWriting(false);
+    }
+  }
+
 
   return (
     <>
@@ -136,8 +169,9 @@ export default function NoteEditorPage() {
                 {isSummaryLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
                  AI Overview
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Pencil className="h-4 w-4 mr-2" /> Improve Writing
+              <DropdownMenuItem onClick={handleImproveWriting} disabled={isImprovingWriting}>
+                {isImprovingWriting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Pencil className="h-4 w-4 mr-2" />}
+                Improve Writing
               </DropdownMenuItem>
               <DropdownMenuSeparator />
                <DropdownMenuItem asChild>
@@ -161,11 +195,9 @@ export default function NoteEditorPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-           <Textarea 
-              placeholder="Start writing your masterpiece here..." 
-              className="min-h-[calc(100vh-280px)] w-full max-w-4xl mx-auto border-0 shadow-none focus-visible:ring-0 p-0 text-lg resize-none bg-transparent"
+           <Editor
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={setContent}
           />
       </main>
         <footer className="p-4 border-t border-border bg-card">
