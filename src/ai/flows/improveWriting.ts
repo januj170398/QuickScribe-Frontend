@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A flow for improving the writing of a note.
@@ -10,12 +11,12 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 
-export const ImproveWritingInputSchema = z.object({
+const ImproveWritingInputSchema = z.object({
   content: z.string().describe('The content of the note to improve.'),
 });
 export type ImproveWritingInput = z.infer<typeof ImproveWritingInputSchema>;
 
-export const ImproveWritingOutputSchema = z.object({
+const ImproveWritingOutputSchema = z.object({
   improvedContent: z
     .string()
     .describe('The improved version of the note content.'),
