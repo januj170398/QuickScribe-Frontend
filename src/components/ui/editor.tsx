@@ -3,12 +3,20 @@
 
 import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3 } from "lucide-react";
+import Underline from "@tiptap/extension-underline";
+import { Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3, Underline as UnderlineIcon } from "lucide-react";
 import { Button } from "./button";
 
 const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: string) => void }) => {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
+      Underline
+    ],
     content: value,
     editorProps: {
       attributes: {
@@ -55,6 +63,14 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
           className="h-8 w-8"
         >
           <Strikethrough className="h-4 w-4" />
+        </Button>
+        <Button
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            variant={editor.isActive('underline') ? 'default' : 'ghost'}
+            size="icon"
+            className="h-8 w-8"
+        >
+            <UnderlineIcon className="h-4 w-4" />
         </Button>
          <div className="border-l h-6 mx-1 border-border" />
          <Button
