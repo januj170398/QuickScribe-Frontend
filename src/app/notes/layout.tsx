@@ -10,6 +10,7 @@ import {
   Moon,
   Sun,
   Menu,
+  Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,9 +25,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import React, { useEffect } from 'react';
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 const useTheme = () => {
-    const [theme, setTheme] = React.useState('light');
+    const [theme, setTheme] = React.useState('dark');
 
     useEffect(() => {
         const isDark = document.documentElement.classList.contains('dark');
@@ -37,6 +40,7 @@ const useTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
         document.documentElement.classList.toggle('dark', newTheme === 'dark');
+        document.documentElement.classList.toggle('light', newTheme === 'light');
     };
 
     return { theme, toggleTheme };
@@ -52,23 +56,59 @@ export default function DashboardLayout({
   const { theme, toggleTheme } = useTheme();
 
   const navItems = [
-    { href: "/notes", icon: Home, label: "Notes" },
+    { href: "/notes", icon: Home, label: "All Notes" },
     { href: "/tags", icon: Tag, label: "Tags" },
-    { href: "/account", icon: User, label: "Account" },
   ];
 
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+    <div className="grid min-h-screen w-full md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-card md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href="/notes" className="flex items-center gap-2 font-semibold">
-              <Feather className="h-6 w-6 text-primary" />
-              <span className="">QuickScribe</span>
-            </Link>
+          <div className="flex h-16 items-center justify-between border-b px-4 lg:px-6">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Toggle user menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                 <DropdownMenuItem asChild>
+                  <Link href="/account">Account Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/">Logout</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+             <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8">
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 py-2">
+            <div className="px-4 lg:px-6 mb-4">
+                 <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        type="search"
+                        placeholder="Search notes..."
+                        className="w-full rounded-lg bg-background pl-8 h-9"
+                    />
+                 </div>
+            </div>
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+               <Link href="/notes/new">
+                <Button className="w-full justify-start mb-4" variant="default">
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Note
+                </Button>
+               </Link>
               {navItems.map((item) => (
                 <Link
                   key={item.label}
@@ -84,30 +124,28 @@ export default function DashboardLayout({
               ))}
             </nav>
           </div>
-          <div className="mt-auto p-4">
-             <Link href="/" className="w-full">
-              <Button variant="ghost" className="w-full justify-start gap-3">
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
-            </Link>
-          </div>
         </div>
       </div>
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6">
-          <Sheet>
+      <div className="flex flex-col bg-background">
+        <header className="flex h-16 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6 md:hidden">
+           <Link href="/notes" className="flex items-center gap-2 font-semibold">
+              <Feather className="h-6 w-6 text-primary" />
+              <span className="">QuickScribe</span>
+            </Link>
+          <div className="w-full flex-1">
+          </div>
+           <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"
-                className="shrink-0 md:hidden"
+                className="shrink-0"
               >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col">
+            <SheetContent side="right" className="flex flex-col">
               <nav className="grid gap-2 text-lg font-medium">
                 <Link
                   href="/notes"
@@ -140,32 +178,8 @@ export default function DashboardLayout({
               </div>
             </SheetContent>
           </Sheet>
-          <div className="w-full flex-1">
-            {/* Header Content */}
-          </div>
-          <Button variant="outline" size="icon" onClick={toggleTheme} className="shrink-0">
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <User className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background overflow-auto">
+        <main className="flex flex-1 flex-col overflow-auto">
           {children}
         </main>
       </div>
