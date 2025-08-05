@@ -1,17 +1,110 @@
-import { Tag } from "lucide-react";
+
+"use client";
+
+import {
+  MoreHorizontal,
+  PlusCircle,
+  Tag,
+} from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { mockNotes } from "@/app/notes/page";
+
+const getTagsWithCounts = () => {
+  const tagCounts: { [key: string]: number } = {};
+  mockNotes.forEach(note => {
+    note.tags.forEach(tag => {
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+    });
+  });
+  return Object.entries(tagCounts).map(([name, count]) => ({ name, count }));
+};
 
 export default function TagsPage() {
+  const tags = getTagsWithCounts();
+
   return (
-    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm h-full">
-      <div className="flex flex-col items-center gap-1 text-center">
-        <Tag className="h-12 w-12 text-muted-foreground" />
-        <h3 className="text-2xl font-bold tracking-tight mt-4">
-          Manage Tags
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          This page is under construction. Come back later to organize your notes with tags.
-        </p>
+    <div className="flex flex-col gap-4 h-full">
+      <div className="flex items-center">
+        <h1 className="text-lg font-semibold md:text-2xl">Manage Tags</h1>
+        <div className="ml-auto flex items-center gap-2">
+          <Button size="sm" className="h-8 gap-1">
+            <PlusCircle className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              New Tag
+            </span>
+          </Button>
+        </div>
       </div>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>All Tags</CardTitle>
+          <CardDescription>
+            Organize your notes by grouping them with tags.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Tag</TableHead>
+                <TableHead>Notes</TableHead>
+                <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tags.map((tag) => (
+                <TableRow key={tag.name}>
+                  <TableCell className="font-medium">
+                     <Badge variant="secondary">{tag.name}</Badge>
+                  </TableCell>
+                  <TableCell>{tag.count}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Toggle menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

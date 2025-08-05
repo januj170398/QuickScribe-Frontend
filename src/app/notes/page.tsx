@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -37,7 +38,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const mockNotes = [
+export const mockNotes = [
   {
     id: "1",
     title: "Project Phoenix Kickoff",
@@ -77,7 +78,7 @@ const mockNotes = [
 
 export default function NotesDashboard() {
   return (
-    <div className="flex flex-col gap-4 h-full">
+    <div className="flex flex-col gap-4 h-full p-4 md:p-6">
         <div className="flex items-center">
             <h1 className="text-lg font-semibold md:text-2xl">My Notes</h1>
              <div className="ml-auto flex items-center gap-2">
