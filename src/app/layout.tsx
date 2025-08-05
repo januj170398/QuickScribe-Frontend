@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'Nimbus Notes',
+  title: 'QuickScribe',
   description: 'A modern, minimalist, and user-friendly note-taking application.',
 };
 

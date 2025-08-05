@@ -34,7 +34,7 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
             <Feather className="h-10 w-10 text-primary" />
           </div>
-          <CardTitle className="text-2xl text-center">Nimbus Notes</CardTitle>
+          <CardTitle className="text-2xl text-center">QuickScribe</CardTitle>
           <CardDescription className="text-center">
             Enter your email below to login to your account
           </CardDescription>
