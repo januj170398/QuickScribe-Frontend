@@ -23,6 +23,10 @@ export default function LoginPage() {
     router.push("/notes");
   };
 
+  const handleGuestLogin = () => {
+    router.push("/notes");
+  };
+
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
       <Card className="mx-auto w-full max-w-sm">
@@ -69,6 +73,11 @@ export default function LoginPage() {
             <Link href="/register" className="underline">
               Sign up
             </Link>
+          </div>
+          <div className="mt-2 text-center text-sm">
+            <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto">
+              Login as Guest
+            </Button>
           </div>
         </CardContent>
       </Card>
