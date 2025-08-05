@@ -12,10 +12,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
-import { Feather } from "lucide-react";
+import { Feather, Loader2 } from "lucide-react";
+import React from "react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [isGuestLoading, setIsGuestLoading] = React.useState(false);
 
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
@@ -24,6 +26,7 @@ export default function LoginPage() {
   };
 
   const handleGuestLogin = () => {
+    setIsGuestLoading(true);
     router.push("/notes");
   };
 
@@ -36,7 +39,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-2xl text-center">QuickScribe</CardTitle>
           <CardDescription className="text-center">
-            Your thoughts are waiting. Let's get them on the page.
+            Your thoughts are waiting. Let&apos;s get them on the page.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -75,8 +78,15 @@ export default function LoginPage() {
             </Link>
           </div>
           <div className="mt-2 text-center text-sm">
-            <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto">
-              Login as Guest
+            <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto" disabled={isGuestLoading}>
+              {isGuestLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </>
+              ) : (
+                "Login as Guest"
+              )}
             </Button>
           </div>
         </CardContent>
