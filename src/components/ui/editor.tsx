@@ -4,8 +4,22 @@
 import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
-import { Bold, Italic, Strikethrough, Heading1, Heading2, Heading3, Underline as UnderlineIcon } from "lucide-react";
+import Table from "@tiptap/extension-table";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
+import TextAlign from "@tiptap/extension-text-align";
+import { 
+    Bold, Italic, Strikethrough, Underline as UnderlineIcon, Heading1, Heading2, Heading3,
+    AlignLeft, AlignCenter, AlignRight, List, ListOrdered, Quote, Code, Minus, Pilcrow, Table as TableIcon
+} from "lucide-react";
 import { Button } from "./button";
+import { 
+    DropdownMenu, 
+    DropdownMenuContent, 
+    DropdownMenuItem, 
+    DropdownMenuTrigger 
+} from "./dropdown-menu";
 
 const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: string) => void }) => {
   const editor = useEditor({
@@ -15,7 +29,16 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
           levels: [1, 2, 3],
         },
       }),
-      Underline
+      Underline,
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
     ],
     content: value,
     editorProps: {
@@ -40,6 +63,52 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
         tippyOptions={{ duration: 100 }}
         className="flex items-center gap-1 bg-card border border-border p-1 rounded-lg shadow-xl"
       >
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Pilcrow className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
+                    <Heading1 className="h-4 w-4 mr-2" />
+                    Heading 1
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
+                    <Heading2 className="h-4 w-4 mr-2" />
+                    Heading 2
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
+                    <Heading3 className="h-4 w-4 mr-2" />
+                    Heading 3
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => editor.chain().focus().toggleBulletList().run()}>
+                    <List className="h-4 w-4 mr-2" />
+                    Bullet List
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+                    <ListOrdered className="h-4 w-4 mr-2" />
+                    Numbered List
+                </DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+                    <Quote className="h-4 w-4 mr-2" />
+                    Blockquote
+                </DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => editor.chain().focus().toggleCodeBlock().run()}>
+                    <Code className="h-4 w-4 mr-2" />
+                    Code Block
+                </DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => editor.chain().focus().setHorizontalRule().run()}>
+                    <Minus className="h-4 w-4 mr-2" />
+                    Horizontal Rule
+                </DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}>
+                    <TableIcon className="h-4 w-4 mr-2" />
+                    Insert Table
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+        <div className="border-l h-6 mx-1 border-border" />
         <Button
           onClick={() => editor.chain().focus().toggleBold().run()}
           variant={editor.isActive('bold') ? 'default' : 'ghost'}
@@ -57,6 +126,14 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
           <Italic className="h-4 w-4" />
         </Button>
         <Button
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          variant={editor.isActive('underline') ? 'default' : 'ghost'}
+          size="icon"
+          className="h-8 w-8"
+        >
+          <UnderlineIcon className="h-4 w-4" />
+        </Button>
+        <Button
           onClick={() => editor.chain().focus().toggleStrike().run()}
           variant={editor.isActive('strike') ? 'default' : 'ghost'}
           size="icon"
@@ -64,39 +141,32 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
         >
           <Strikethrough className="h-4 w-4" />
         </Button>
+        <div className="border-l h-6 mx-1 border-border" />
         <Button
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            variant={editor.isActive('underline') ? 'default' : 'ghost'}
-            size="icon"
-            className="h-8 w-8"
-        >
-            <UnderlineIcon className="h-4 w-4" />
-        </Button>
-         <div className="border-l h-6 mx-1 border-border" />
-         <Button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          variant={editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'}
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          variant={editor.isActive({ textAlign: 'left' }) ? 'default' : 'ghost'}
           size="icon"
           className="h-8 w-8"
         >
-          <Heading1 className="h-4 w-4" />
+          <AlignLeft className="h-4 w-4" />
         </Button>
-         <Button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          variant={editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'}
+        <Button
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          variant={editor.isActive({ textAlign: 'center' }) ? 'default' : 'ghost'}
           size="icon"
           className="h-8 w-8"
         >
-          <Heading2 className="h-4 w-4" />
+          <AlignCenter className="h-4 w-4" />
         </Button>
-         <Button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          variant={editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'}
+        <Button
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          variant={editor.isActive({ textAlign: 'right' }) ? 'default' : 'ghost'}
           size="icon"
           className="h-8 w-8"
         >
-          <Heading3 className="h-4 w-4" />
+          <AlignRight className="h-4 w-4" />
         </Button>
+
       </BubbleMenu>}
       <EditorContent editor={editor} />
     </>
