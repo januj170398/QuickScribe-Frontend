@@ -10,7 +10,6 @@ import {
   Trash2,
   MoreVertical,
   Pencil,
-  Book,
   Code
 } from "lucide-react";
 import Link from "next/link";
@@ -65,7 +64,7 @@ export default function NoteEditorPage() {
 
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full bg-card">
       <header className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
