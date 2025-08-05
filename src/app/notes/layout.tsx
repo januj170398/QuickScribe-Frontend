@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -11,6 +12,7 @@ import {
   Sun,
   Menu,
   Plus,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import React, { useEffect } from 'react';
 import { Input } from "@/components/ui/input";
@@ -53,7 +55,17 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, toggleTheme } = useTheme();
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
+        router.push('/');
+        setIsLoggingOut(false);
+    }, 750);
+  }
 
   const navItems = [
     { href: "/notes", icon: Home, label: "All Notes" },
@@ -80,8 +92,9 @@ export default function DashboardLayout({
                 </DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/">Logout</Link>
+                <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut}>
+                    {isLoggingOut ? <Loader2 className="h-4 w-4 mr-2 animate-spin"/> : <LogOut className="h-4 w-4 mr-2"/>}
+                     Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -169,12 +182,10 @@ export default function DashboardLayout({
                 ))}
               </nav>
                <div className="mt-auto">
-                <Link href="/" className="w-full">
-                    <Button variant="ghost" className="w-full justify-start gap-4 text-lg">
-                        <LogOut className="h-5 w-5" />
-                        Logout
-                    </Button>
-                </Link>
+                <Button variant="ghost" className="w-full justify-start gap-4 text-lg" onClick={handleLogout} disabled={isLoggingOut}>
+                    {isLoggingOut ? <Loader2 className="h-5 w-5 mr-2 animate-spin"/> : <LogOut className="h-5 w-5" />}
+                    Logout
+                </Button>
               </div>
             </SheetContent>
           </Sheet>

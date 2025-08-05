@@ -17,18 +17,18 @@ import { Feather, Loader2 } from "lucide-react";
 import React from "react";
 import { motion } from "framer-motion";
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const router = useRouter();
-  const [isRegisterLoading, setIsRegisterLoading] = React.useState(false);
   const [isGuestLoading, setIsGuestLoading] = React.useState(false);
+  const [isLoginLoading, setIsLoginLoading] = React.useState(false);
 
-  const handleRegister = (event: React.FormEvent) => {
+  const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
-    setIsRegisterLoading(true);
-    // This is a mock registration. In a real app, you'd handle user creation here.
+    setIsLoginLoading(true);
+    // This is a mock login. In a real app, you'd handle authentication here.
     setTimeout(() => router.push("/notes"), 750);
   };
-  
+
   const handleGuestLogin = () => {
     setIsGuestLoading(true);
     setTimeout(() => router.push("/notes"), 750);
@@ -43,23 +43,19 @@ export default function RegisterPage() {
       >
         <Card className="mx-auto w-full max-w-sm">
           <CardHeader>
-             <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-4">
                <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
                 <Feather className="h-10 w-10 text-primary" />
               </Link>
             </div>
-            <CardTitle className="text-2xl text-center">Create an Account</CardTitle>
+            <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
             <CardDescription className="text-center">
-              Let&apos;s get you set up to capture some brilliance.
+              Enter your credentials to access your notes.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleRegister}>
+            <form onSubmit={handleLogin}>
               <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="full-name">Full Name</Label>
-                  <Input id="full-name" placeholder="John Doe" required disabled={isRegisterLoading || isGuestLoading} />
-                </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -67,38 +63,41 @@ export default function RegisterPage() {
                     type="email"
                     placeholder="m@example.com"
                     required
-                    disabled={isRegisterLoading || isGuestLoading}
+                    disabled={isLoginLoading || isGuestLoading}
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    required 
-                    disabled={isRegisterLoading || isGuestLoading}
-                  />
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                    <Link
+                      href="#"
+                      className="ml-auto inline-block text-sm underline"
+                    >
+                      Forgot your password?
+                    </Link>
+                  </div>
+                  <Input id="password" type="password" required disabled={isLoginLoading || isGuestLoading} />
                 </div>
-                <Button type="submit" className="w-full" disabled={isRegisterLoading || isGuestLoading}>
-                  {isRegisterLoading ? (
+                <Button type="submit" className="w-full" disabled={isLoginLoading || isGuestLoading}>
+                  {isLoginLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Please wait
                     </>
                   ) : (
-                    "Create an account"
+                    "Login"
                   )}
                 </Button>
               </div>
             </form>
             <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
-              <Link href="/login" className="underline">
-                Login
+              Don&apos;t have an account?{" "}
+              <Link href="/register" className="underline">
+                Sign up
               </Link>
             </div>
-             <div className="mt-2 text-center text-sm">
-              <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto" disabled={isRegisterLoading || isGuestLoading}>
+            <div className="mt-2 text-center text-sm">
+              <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto" disabled={isGuestLoading || isLoginLoading}>
                 {isGuestLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
