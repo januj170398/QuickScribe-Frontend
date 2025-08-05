@@ -16,18 +16,9 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 import React from "react";
-import { Label } from "@/components/ui/label";
 import { useParams } from 'next/navigation';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -74,26 +65,23 @@ export default function NoteEditorPage() {
 
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center gap-4 p-4 border-b">
-        <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-          <Link href="/notes">
-            <ArrowLeft className="h-5 w-5" />
-            <span className="sr-only">Back</span>
-          </Link>
-        </Button>
-        <div className="flex-1">
-             <Input 
-                placeholder="Note Title" 
-                className="text-2xl font-bold leading-none tracking-tight border-0 shadow-none focus-visible:ring-0 p-0 bg-transparent" 
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
+    <div className="flex flex-col h-full bg-background">
+      <header className="flex items-center justify-between p-4 border-b border-border">
+        <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                <Link href="/notes">
+                    <ArrowLeft className="h-5 w-5" />
+                    <span className="sr-only">Back</span>
+                </Link>
+            </Button>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                {syncStatus === 'synced' && <><CheckCircle2 className="h-4 w-4 text-green-500" /> Synced</>}
+                {syncStatus === 'syncing' && <div className="flex items-center gap-1 text-sm text-muted-foreground animate-pulse">Syncing...</div>}
+                {syncStatus === 'dirty' && <div className="flex items-center gap-1 text-sm text-muted-foreground">Saving...</div>}
+            </div>
         </div>
-        <div className="flex items-center gap-2 md:ml-auto">
-          {syncStatus === 'synced' && <div className="flex items-center gap-2 text-sm text-muted-foreground"><CheckCircle2 className="h-4 w-4" /> Synced</div>}
-          {syncStatus === 'syncing' && <div className="flex items-center gap-1 text-sm text-muted-foreground animate-pulse">Syncing...</div>}
-          {syncStatus === 'dirty' && <div className="flex items-center gap-1 text-sm text-muted-foreground">Saving...</div>}
+        
+        <div className="flex items-center gap-2">
            <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -108,11 +96,11 @@ export default function NoteEditorPage() {
                 <Upload className="h-4 w-4 mr-2" /> Attachments
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Pencil className="h-4 w-4 mr-2" /> Summarize
-              </DropdownMenuItem>
                <DropdownMenuItem>
-                <Book className="h-4 w-4 mr-2" /> Improve Writing
+                <Sparkles className="h-4 w-4 mr-2" /> AI Overview
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Pencil className="h-4 w-4 mr-2" /> Improve Writing
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Code className="h-4 w-4 mr-2" /> Explain Code
@@ -128,37 +116,44 @@ export default function NoteEditorPage() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </div>
-      <div className="flex-1 overflow-y-auto">
-        <div className="container mx-auto max-w-4xl py-8">
+      </header>
+
+      <main className="flex-1 overflow-y-auto">
+        <div className="container mx-auto max-w-4xl py-8 px-4">
+            <Input 
+                placeholder="Note Title" 
+                className="text-4xl font-bold tracking-tight border-0 shadow-none focus-visible:ring-0 p-0 mb-6 bg-transparent" 
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
              <Textarea 
                 placeholder="Start writing your masterpiece here..." 
-                className="min-h-[calc(100vh-200px)] border-0 shadow-none focus-visible:ring-0 p-0 text-base resize-none bg-transparent"
+                className="min-h-[calc(100vh-280px)] border-0 shadow-none focus-visible:ring-0 p-0 text-lg resize-none bg-transparent leading-relaxed"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
             />
         </div>
-      </div>
-        <div className="p-4 border-t bg-card">
+      </main>
+        <footer className="p-4 border-t border-border bg-card">
             <div className="flex items-center gap-3">
             <Tag className="h-4 w-4 text-muted-foreground" />
             <div className="flex flex-wrap gap-2">
                 {tags.map(tag => (
-                    <Badge key={tag} variant="secondary">
+                    <Badge key={tag} variant="secondary" className="font-normal">
                         {tag}
-                        <button onClick={() => removeTag(tag)} className="ml-1 font-bold hover:text-destructive text-base">&times;</button>
+                        <button onClick={() => removeTag(tag)} className="ml-1.5 font-bold hover:text-destructive text-base leading-none translate-y-[-1px]">&times;</button>
                     </Badge>
                 ))}
             </div>
             <Input 
-                className="h-8 flex-1 bg-transparent border-0 focus-visible:ring-0 shadow-none p-0"
+                className="h-8 flex-1 bg-transparent border-0 focus-visible:ring-0 shadow-none p-0 text-sm"
                 placeholder="Add a tag..." 
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagInputKeyDown}
             />
             </div>
-        </div>
+        </footer>
     </div>
   );
 }
