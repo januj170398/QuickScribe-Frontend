@@ -96,4 +96,21 @@ body {
   .prose :where(code):not(:where([class~="not-prose"] *))::after {
     content: "";
   }
+  
+  .prose table {
+    @apply w-full my-4 border-collapse border border-border;
+  }
+  .prose th {
+    @apply border border-border px-4 py-2 text-left font-bold bg-muted;
+  }
+  .prose td {
+    @apply border border-border px-4 py-2;
+  }
+  .prose tr {
+    @apply border-t border-border;
+  }
+  .prose tr:nth-child(2n) {
+    @apply bg-muted/50;
+  }
 }
+
