@@ -18,9 +18,11 @@ import React from "react";
 export default function LoginPage() {
   const router = useRouter();
   const [isGuestLoading, setIsGuestLoading] = React.useState(false);
+  const [isLoginLoading, setIsLoginLoading] = React.useState(false);
 
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
+    setIsLoginLoading(true);
     // This is a mock login. In a real app, you'd handle authentication here.
     router.push("/notes");
   };
@@ -52,6 +54,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="m@example.com"
                   required
+                  disabled={isLoginLoading || isGuestLoading}
                 />
               </div>
               <div className="grid gap-2">
@@ -64,10 +67,17 @@ export default function LoginPage() {
                     Forgot your password?
                   </Link>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" required disabled={isLoginLoading || isGuestLoading} />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={isLoginLoading || isGuestLoading}>
+                {isLoginLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  "Login"
+                )}
               </Button>
             </div>
           </form>
@@ -78,7 +88,7 @@ export default function LoginPage() {
             </Link>
           </div>
           <div className="mt-2 text-center text-sm">
-            <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto" disabled={isGuestLoading}>
+            <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto" disabled={isGuestLoading || isLoginLoading}>
               {isGuestLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

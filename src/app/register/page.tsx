@@ -12,20 +12,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
-import { Feather } from "lucide-react";
+import { Feather, Loader2 } from "lucide-react";
 import React from "react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [isRegisterLoading, setIsRegisterLoading] = React.useState(false);
+  const [isGuestLoading, setIsGuestLoading] = React.useState(false);
 
   const handleRegister = (event: React.FormEvent) => {
     event.preventDefault();
+    setIsRegisterLoading(true);
     // This is a mock registration. In a real app, you'd handle user creation here.
     router.push("/notes");
   };
   
   const handleGuestLogin = () => {
+    setIsGuestLoading(true);
     router.push("/notes");
   };
 
@@ -38,7 +42,7 @@ export default function RegisterPage() {
           </div>
           <CardTitle className="text-2xl text-center">Create an Account</CardTitle>
           <CardDescription className="text-center">
-            Let's get you set up to capture some brilliance.
+            Let&apos;s get you set up to capture some brilliance.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -46,7 +50,7 @@ export default function RegisterPage() {
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="full-name">Full Name</Label>
-                <Input id="full-name" placeholder="John Doe" required />
+                <Input id="full-name" placeholder="John Doe" required disabled={isRegisterLoading || isGuestLoading} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -55,6 +59,7 @@ export default function RegisterPage() {
                   type="email"
                   placeholder="m@example.com"
                   required
+                  disabled={isRegisterLoading || isGuestLoading}
                 />
               </div>
               <div className="grid gap-2">
@@ -63,10 +68,18 @@ export default function RegisterPage() {
                   id="password" 
                   type="password" 
                   required 
+                  disabled={isRegisterLoading || isGuestLoading}
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Create an account
+              <Button type="submit" className="w-full" disabled={isRegisterLoading || isGuestLoading}>
+                {isRegisterLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  "Create an account"
+                )}
               </Button>
             </div>
           </form>
@@ -77,8 +90,15 @@ export default function RegisterPage() {
             </Link>
           </div>
            <div className="mt-2 text-center text-sm">
-            <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto">
-              Login as Guest
+            <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto" disabled={isRegisterLoading || isGuestLoading}>
+              {isGuestLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </>
+              ) : (
+                "Login as Guest"
+              )}
             </Button>
           </div>
         </CardContent>
