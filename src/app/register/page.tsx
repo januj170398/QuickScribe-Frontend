@@ -18,21 +18,15 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { toast } = useToast();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
 
   const handleRegister = (event: React.FormEvent) => {
     event.preventDefault();
-    if (email === "test@example.com" && password === "password") {
-      router.push("/notes");
-    } else {
-      toast({
-        title: "Invalid Credentials",
-        description: "Please use 'test@example.com' and 'password' to proceed.",
-        variant: "destructive",
-      });
-    }
+    // This is a mock registration. In a real app, you'd handle user creation here.
+    router.push("/notes");
+  };
+  
+  const handleGuestLogin = () => {
+    router.push("/notes");
   };
 
   return (
@@ -61,8 +55,6 @@ export default function RegisterPage() {
                   type="email"
                   placeholder="m@example.com"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
@@ -71,8 +63,6 @@ export default function RegisterPage() {
                   id="password" 
                   type="password" 
                   required 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <Button type="submit" className="w-full">
@@ -80,11 +70,16 @@ export default function RegisterPage() {
               </Button>
             </div>
           </form>
-          <div className="mt-4 text-center text-sm">
+           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}
             <Link href="/" className="underline">
               Login
             </Link>
+          </div>
+           <div className="mt-2 text-center text-sm">
+            <Button variant="link" onClick={handleGuestLogin} className="p-0 h-auto">
+              Login as Guest
+            </Button>
           </div>
         </CardContent>
       </Card>
