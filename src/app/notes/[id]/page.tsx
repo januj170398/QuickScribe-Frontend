@@ -101,9 +101,6 @@ export default function NoteEditorPage() {
               <DropdownMenuItem>
                 <Pencil className="h-4 w-4 mr-2" /> Improve Writing
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Code className="h-4 w-4 mr-2" /> Explain Code
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
                <DropdownMenuItem>
                 <Tag className="h-4 w-4 mr-2" /> Manage Tags
