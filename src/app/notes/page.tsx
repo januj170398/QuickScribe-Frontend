@@ -39,48 +39,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React from "react";
-
-export const mockNotes = [
-  {
-    id: "1",
-    title: "Project Phoenix Kickoff",
-    status: "active",
-    createdAt: "2023-10-26",
-    tags: ["project", "work"],
-  },
-  {
-    id: "2",
-    title: "Q4 Marketing Strategy",
-    status: "active",
-    createdAt: "2023-10-25",
-    tags: ["marketing", "strategy"],
-  },
-  {
-    id: "3",
-    title: "Grocery List",
-    status: "archived",
-    createdAt: "2023-10-24",
-    tags: ["personal"],
-  },
-    {
-    id: "4",
-    title: "Book Club Summary: Dune",
-    status: "active",
-    createdAt: "2023-10-22",
-    tags: ["reading", "personal"],
-  },
-  {
-    id: "5",
-    title: "API Design Best Practices",
-    status: "active",
-    createdAt: "2023-10-20",
-    tags: ["tech", "development"],
-  },
-];
+import { useNotesStore, Note } from "@/lib/store";
 
 export default function NotesDashboard() {
+  const { notes, deleteNote } = useNotesStore();
   const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
-  const allTags = [...new Set(mockNotes.flatMap(note => note.tags))];
+  
+  const allTags = [...new Set(notes.flatMap(note => note.tags))];
 
   const handleTagSelect = (tag: string) => {
     setSelectedTags(prev =>
@@ -88,14 +53,13 @@ export default function NotesDashboard() {
     );
   };
   
-  const filteredNotes = mockNotes.filter(note => {
+  const filteredNotes = notes.filter(note => {
     if (selectedTags.length === 0) return true;
     return selectedTags.some(tag => note.tags.includes(tag));
   });
 
   const activeNotes = filteredNotes.filter(n => n.status === 'active');
   const archivedNotes = filteredNotes.filter(n => n.status === 'archived');
-
 
   return (
     <div className="flex flex-col gap-4 h-full p-4 md:p-6">
@@ -184,11 +148,11 @@ export default function NotesDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <NotesTable notes={filteredNotes} />
+              <NotesTable notes={filteredNotes} deleteNote={deleteNote} />
             </CardContent>
             <CardFooter>
               <div className="text-xs text-muted-foreground">
-                Showing <strong>1-{filteredNotes.length}</strong> of <strong>{mockNotes.length}</strong> notes
+                Showing <strong>1-{filteredNotes.length}</strong> of <strong>{notes.length}</strong> notes
               </div>
             </CardFooter>
           </Card>
@@ -202,7 +166,7 @@ export default function NotesDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <NotesTable notes={activeNotes} />
+              <NotesTable notes={activeNotes} deleteNote={deleteNote} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -215,7 +179,7 @@ export default function NotesDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <NotesTable notes={archivedNotes} />
+              <NotesTable notes={archivedNotes} deleteNote={deleteNote} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -224,7 +188,7 @@ export default function NotesDashboard() {
   );
 }
 
-function NotesTable({ notes }: { notes: typeof mockNotes }) {
+function NotesTable({ notes, deleteNote }: { notes: Note[], deleteNote: (id: string) => void }) {
   return (
     <Table>
       <TableHeader>
@@ -257,7 +221,7 @@ function NotesTable({ notes }: { notes: typeof mockNotes }) {
               <Badge variant={note.status === 'active' ? 'outline' : 'secondary'}>{note.status}</Badge>
             </TableCell>
             <TableCell className="hidden md:table-cell">
-              {note.createdAt}
+              {new Date(note.createdAt).toLocaleDateString()}
             </TableCell>
             <TableCell>
               <DropdownMenu>
@@ -276,7 +240,7 @@ function NotesTable({ notes }: { notes: typeof mockNotes }) {
                   <Link href={`/notes/${note.id}`} passHref>
                     <DropdownMenuItem asChild><Link href={`/notes/${note.id}`}>Edit</Link></DropdownMenuItem>
                   </Link>
-                  <DropdownMenuItem>Delete</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => deleteNote(note.id)}>Delete</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>

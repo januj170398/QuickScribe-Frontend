@@ -4,7 +4,6 @@
 import {
   MoreHorizontal,
   PlusCircle,
-  Tag,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -31,11 +30,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { mockNotes } from "@/app/notes/page";
+import { useNotesStore } from "@/lib/store";
 
-const getTagsWithCounts = () => {
+const getTagsWithCounts = (notes: any[]) => {
   const tagCounts: { [key: string]: number } = {};
-  mockNotes.forEach(note => {
+  notes.forEach(note => {
     note.tags.forEach(tag => {
       tagCounts[tag] = (tagCounts[tag] || 0) + 1;
     });
@@ -44,10 +43,11 @@ const getTagsWithCounts = () => {
 };
 
 export default function TagsPage() {
-  const tags = getTagsWithCounts();
+  const { notes } = useNotesStore();
+  const tags = getTagsWithCounts(notes);
 
   return (
-    <div className="flex flex-col gap-4 h-full">
+    <div className="flex flex-col gap-4 h-full p-4 md:p-6">
       <div className="flex items-center">
         <h1 className="text-lg font-semibold md:text-2xl">Manage Tags</h1>
         <div className="ml-auto flex items-center gap-2">
