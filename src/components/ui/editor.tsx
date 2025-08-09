@@ -14,13 +14,13 @@ import {
     AlignLeft, AlignCenter, AlignRight, List, ListOrdered, Quote, Code, Minus, Pilcrow, Table as TableIcon,
     ArrowUp, ArrowDown, Trash2, FlipHorizontal, FlipVertical
 } from "lucide-react";
-import { Button } from "./button";
+import { Button } from "@/components/ui/button";
 import { 
     DropdownMenu, 
     DropdownMenuContent, 
     DropdownMenuItem, 
     DropdownMenuTrigger 
-} from "./dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { useDebouncedCallback } from "use-debounce";
 import React from "react";
 
@@ -174,8 +174,6 @@ const EditorToolbar = ({ editor }: { editor: any }) => {
 
 
 const TiptapEditor = ({ initialContent, onChange }: { initialContent: string; onChange: (value: string) => void }) => {
-  const [content, setContent] = React.useState(initialContent);
-  
   const debouncedOnChange = useDebouncedCallback(onChange, 500);
   
   const editor = useEditor({
@@ -196,7 +194,7 @@ const TiptapEditor = ({ initialContent, onChange }: { initialContent: string; on
         types: ['heading', 'paragraph'],
       }),
     ],
-    content: content,
+    content: initialContent,
     editorProps: {
       attributes: {
         class:
@@ -205,17 +203,13 @@ const TiptapEditor = ({ initialContent, onChange }: { initialContent: string; on
     },
     onUpdate: ({ editor }) => {
         const html = editor.getHTML();
-        setContent(html);
         debouncedOnChange(html);
     },
   });
 
    React.useEffect(() => {
-    if (editor && !editor.isDestroyed && initialContent !== content) {
-      // Use a timeout to avoid a potential race condition with the editor's internal state updates
-      setTimeout(() => {
-        editor.commands.setContent(initialContent);
-      });
+    if (editor && !editor.isDestroyed && editor.getHTML() !== initialContent) {
+      editor.commands.setContent(initialContent, false);
     }
   }, [initialContent, editor]);
 
