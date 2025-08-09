@@ -196,7 +196,7 @@ export default function NoteEditorPage() {
               onChange={(e) => setTitle(e.target.value)}
             />
            <Editor
-              value={content}
+              initialContent={content}
               onChange={setContent}
           />
       </main>

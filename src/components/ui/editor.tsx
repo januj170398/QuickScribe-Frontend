@@ -21,6 +21,8 @@ import {
     DropdownMenuItem, 
     DropdownMenuTrigger 
 } from "./dropdown-menu";
+import { useDebouncedCallback } from "use-debounce";
+import React from "react";
 
 const TableToolbar = ({ editor }: { editor: any }) => {
     if (!editor.isActive("table")) {
@@ -171,7 +173,11 @@ const EditorToolbar = ({ editor }: { editor: any }) => {
 };
 
 
-const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: string) => void }) => {
+const TiptapEditor = ({ initialContent, onChange }: { initialContent: string; onChange: (value: string) => void }) => {
+  const [content, setContent] = React.useState(initialContent);
+  
+  const debouncedOnChange = useDebouncedCallback(onChange, 500);
+  
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -190,7 +196,7 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
         types: ['heading', 'paragraph'],
       }),
     ],
-    content: value,
+    content: content,
     editorProps: {
       attributes: {
         class:
@@ -198,9 +204,21 @@ const TiptapEditor = ({ value, onChange }: { value: string; onChange: (value: st
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+        const html = editor.getHTML();
+        setContent(html);
+        debouncedOnChange(html);
     },
   });
+
+   React.useEffect(() => {
+    if (editor && !editor.isDestroyed && initialContent !== content) {
+      // Use a timeout to avoid a potential race condition with the editor's internal state updates
+      setTimeout(() => {
+        editor.commands.setContent(initialContent);
+      });
+    }
+  }, [initialContent, editor]);
+
 
   if (!editor) {
     return null;
