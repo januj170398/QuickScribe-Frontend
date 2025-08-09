@@ -20,11 +20,9 @@ import { Input } from "@/components/ui/input";
 import React from "react";
 import { useParams } from 'next/navigation';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { summarizeNote } from "@/ai/flows/summarizeNote";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import Editor from "@/components/ui/editor";
-import { improveWriting } from "@/ai/flows/improveWriting";
 
 
 export default function NoteEditorPage() {
@@ -39,12 +37,6 @@ export default function NoteEditorPage() {
   const [tags, setTags] = React.useState<string[]>(isNewNote ? [] : ["project", "work"]);
   const [tagInput, setTagInput] = React.useState("");
   const [syncStatus, setSyncStatus] = React.useState<"synced" | "syncing" | "dirty">("synced");
-
-  const [isSummaryLoading, setIsSummaryLoading] = React.useState(false);
-  const [isImprovingWriting, setIsImprovingWriting] = React.useState(false);
-  const [summary, setSummary] = React.useState<string | null>(null);
-  const [isSummaryDialogOpen, setIsSummaryDialogOpen] = React.useState(false);
-
 
   const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && tagInput.trim() !== "") {
@@ -75,62 +67,6 @@ export default function NoteEditorPage() {
         clearTimeout(handler);
     };
   }, [title, content, tags, isNewNote]);
-
-  const handleAiOverview = async () => {
-    if (!content) {
-        toast({
-            variant: "destructive",
-            title: "Cannot generate overview",
-            description: "There is no content to summarize.",
-        });
-        return;
-    }
-    setIsSummaryLoading(true);
-    try {
-      const result = await summarizeNote({ content });
-      setSummary(result.summary);
-      setIsSummaryDialogOpen(true);
-    } catch (error) {
-       toast({
-        variant: "destructive",
-        title: "AI Overview Failed",
-        description: "We couldn't generate a summary for this note. Please try again.",
-      });
-      console.error("AI Overview error:", error);
-    } finally {
-      setIsSummaryLoading(false);
-    }
-  }
-
-  const handleImproveWriting = async () => {
-    if (!content) {
-        toast({
-            variant: "destructive",
-            title: "Cannot improve writing",
-            description: "There is no content to improve.",
-        });
-        return;
-    }
-    setIsImprovingWriting(true);
-    try {
-      const result = await improveWriting({ content });
-      setContent(result.improvedContent);
-      toast({
-        title: "Writing Improved",
-        description: "The AI has improved the writing of your note.",
-      })
-    } catch (error) {
-       toast({
-        variant: "destructive",
-        title: "Failed to Improve Writing",
-        description: "We couldn't improve the writing for this note. Please try again.",
-      });
-      console.error("Improve writing error:", error);
-    } finally {
-      setIsImprovingWriting(false);
-    }
-  }
-
 
   return (
     <>
@@ -163,15 +99,6 @@ export default function NoteEditorPage() {
               </DropdownMenuItem>
                <DropdownMenuItem>
                 <Upload className="h-4 w-4 mr-2" /> Attachments
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-               <DropdownMenuItem onClick={handleAiOverview} disabled={isSummaryLoading}>
-                {isSummaryLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
-                 AI Overview
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleImproveWriting} disabled={isImprovingWriting}>
-                {isImprovingWriting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Pencil className="h-4 w-4 mr-2" />}
-                Improve Writing
               </DropdownMenuItem>
               <DropdownMenuSeparator />
                <DropdownMenuItem asChild>
@@ -221,21 +148,6 @@ export default function NoteEditorPage() {
             </div>
         </footer>
     </div>
-    <Dialog open={isSummaryDialogOpen} onOpenChange={setIsSummaryDialogOpen}>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>
-                    <div className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-primary" />
-                        <span>AI Overview</span>
-                    </div>
-                </DialogTitle>
-                <DialogDescription className="pt-4 text-foreground text-base leading-relaxed">
-                   {summary}
-                </DialogDescription>
-            </DialogHeader>
-        </DialogContent>
-    </Dialog>
     </>
   );
 }
