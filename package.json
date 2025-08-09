@@ -23,6 +23,7 @@
     "@radix-ui/react-menubar": "^1.1.6",
     "@radix-ui/react-popover": "^1.1.6",
     "@radix-ui/react-progress": "^1.1.2",
+    "@radix-ui/react-tabs": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
     "@tiptap/extension-table": "^2.5.8",
     "@tiptap/extension-table-cell": "^2.5.8",
