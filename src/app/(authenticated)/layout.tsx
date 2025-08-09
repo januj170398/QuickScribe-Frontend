@@ -1,5 +1,7 @@
 
-export default function NotesLayout({
+import React from 'react';
+
+export default function AuthenticatedLayout({
   children,
 }: {
   children: React.ReactNode;
