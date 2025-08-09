@@ -51,7 +51,7 @@ Once the dependencies are installed, you can start the development server:
 npm run dev
 ```
 
-This will run the app in development mode. Open [http://localhost:3000](http://localhost:3000) (or the port specified in your terminal) to view it in your browser. The page will auto-update as you make changes to the code.
+This will run the app in development mode. Open [http://localhost:9002](http://localhost:9002) to view it in your browser. The page will auto-update as you make changes to the code.
 
 ## Available Scripts
 
