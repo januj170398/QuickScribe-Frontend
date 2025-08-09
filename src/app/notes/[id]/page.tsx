@@ -87,13 +87,19 @@ export default function NoteEditorPage() {
     handleFieldChange('content', content);
   }
 
+  const handleAddTag = () => {
+    if (tagInput.trim() !== "") {
+        if (note && !note.tags.includes(tagInput.trim())) {
+            handleFieldChange('tags', [...note.tags, tagInput.trim()]);
+        }
+        setTagInput("");
+    }
+  };
+
   const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && tagInput.trim() !== "") {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      if (note && !note.tags.includes(tagInput.trim())) {
-        handleFieldChange('tags', [...note.tags, tagInput.trim()]);
-      }
-      setTagInput("");
+      handleAddTag();
     }
   };
 
@@ -184,13 +190,16 @@ export default function NoteEditorPage() {
                     </Badge>
                 ))}
             </div>
-            <Input 
-                className="h-8 flex-1 bg-transparent border-0 focus-visible:ring-0 shadow-none p-0 text-sm"
-                placeholder="Add a tag..." 
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagInputKeyDown}
-            />
+            <div className="flex items-center gap-2 flex-1">
+                <Input 
+                    className="h-8 flex-1 bg-transparent border-0 focus-visible:ring-0 shadow-none p-0 text-sm"
+                    placeholder="Add a tag..." 
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleTagInputKeyDown}
+                />
+                <Button size="sm" onClick={handleAddTag} disabled={!tagInput.trim()}>Add</Button>
+            </div>
             </div>
         </footer>
     </div>
